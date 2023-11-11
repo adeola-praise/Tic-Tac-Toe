@@ -106,18 +106,60 @@ function receivePlayerInput() {
 
   placeMark(currentPlayer, row_input, column_input);
   checkPlayerTurn(currentPlayer);
+  gameBoard.displayGameBoard();
 }
 
-function playGame() {
-  let numOfTurns = 9;
+function checkRows() {
+  let board = gameBoard.getGameBoard();
+  for (let i = 0; i < board.length; i++) {
+    const row = board[i];
 
-  for (let i = 0; i < numOfTurns; i++) {
-    gameBoard.displayGameBoard();
-    if (checkForEmptyCell()) {
-      receivePlayerInput();
+    // Check if the column contains all X or all O values
+    let allXRow = row.every((element) => element === "X");
+    let allORow = row.every((element) => element === "O");
+
+    if (allXRow || allORow) {
+      let msg = console.log(`Array is ${row}`);
+      return { msg };
+    } else {
+      console.log("No Match");
+    }
+  }
+}
+
+function checkColumns() {
+  let brd = gameBoard.getGameBoard();
+  let colArray = [];
+
+  for (let i = 0; i < brd.length; i++) {
+    for (let j = 0; j < brd.length; j++) {
+      const column = brd[j][i];
+      colArray.push(column);
     }
 
-    // checkForEmptyCell();
+    // Check if the column contains all X or all O values
+    let allXCol = colArray.every((element) => element === "X");
+    let allOCol = colArray.every((element) => element === "O");
+
+    if (allXCol || allOCol) {
+      let msg = console.log(`Array is ${colArray}`);
+      return { msg };
+    } else {
+      colArray = [];
+    }
+  }
+}
+
+// Next thing is to check game status
+// checkGameStatus(){
+//   if (checkColumns() || checkRows()){}
+// }
+
+function playGame() {
+  gameBoard.displayGameBoard();
+
+  while (checkForEmptyCell()) {
+    receivePlayerInput();
   }
 
   // else {
