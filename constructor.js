@@ -109,45 +109,87 @@ function receivePlayerInput() {
   gameBoard.displayGameBoard();
 }
 
-function checkRows() {
-  let board = gameBoard.getGameBoard();
-  for (let i = 0; i < board.length; i++) {
-    const row = board[i];
+function checkleftDiagonal(array) {
+  let leftDiag = [];
 
-    // Check if the column contains all X or all O values
-    let allXRow = row.every((element) => element === "X");
-    let allORow = row.every((element) => element === "O");
-
-    if (allXRow || allORow) {
-      let msg = console.log(`Array is ${row}`);
-      return { msg };
-    } else {
-      console.log("No Match");
-    }
+  for (let i = 0; i < array.length; i++) {
+    const row = array[i];
+    winRowIndex[i] = winColIndex[i] = i;
+    leftDiag.push(array[i][i]);
   }
+
+  return checkForCrossMatch(leftDiag);
 }
 
-function checkColumns() {
-  let brd = gameBoard.getGameBoard();
+function checkRightDiagonal(array) {
+  let rightDiag = [];
+
+  for (let i = 0; i < array.length; i++) {
+    winRowIndex[i] = i;
+    winColIndex[i] = array.length - 1 - i;
+    rightDiag.push(array[i][array.length - 1 - i]);
+  }
+
+  return checkForCrossMatch(rightDiag);
+}
+
+function checkRows(array) {
+  for (let i = 0; i < array.length; i++) {
+    const row = array[i];
+    for (let j = 0; j < array.length; j++) {
+      winRowIndex.push(i);
+      winColIndex[j] = j;
+    }
+
+    if (checkForCrossMatch(row)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function checkColumns(array) {
   let colArray = [];
 
-  for (let i = 0; i < brd.length; i++) {
-    for (let j = 0; j < brd.length; j++) {
-      const column = brd[j][i];
+  for (let i = 0; i < array.length; i++) {
+    for (let j = 0; j < array.length; j++) {
+      winColIndex.push(i);
+      winRowIndex[j] = j;
+      const column = array[j][i];
       colArray.push(column);
     }
 
-    // Check if the column contains all X or all O values
-    let allXCol = colArray.every((element) => element === "X");
-    let allOCol = colArray.every((element) => element === "O");
-
-    if (allXCol || allOCol) {
-      let msg = console.log(`Array is ${colArray}`);
-      return { msg };
+    // Check if the column has a complete match
+    if (checkForCrossMatch(colArray)) {
+      return true;
     } else {
-      colArray = [];
+      colArray = []; // Empty the array storing the column if it doesn't
     }
   }
+
+  return false;
+}
+
+function checkForCrossMatch(arraySub) {
+  // Check if it contains all X or all O values
+  let allX = arraySub.every((element) => element === "X");
+  let allO = arraySub.every((element) => element === "O");
+
+  if (allX || allO) {
+    console.log("checking for match...");
+    console.log(`Found match: ${arraySub}`);
+    console.log(`Column Numbers: ${winColIndex}`);
+    console.log(`Row Numbers: ${winRowIndex}`);
+    return true;
+  } else {
+    // Empty the winrow and wincol
+    console.log(`No match found`);
+  }
+
+  winColIndex = [];
+  winRowIndex = [];
+  return false;
 }
 
 // Next thing is to check game status

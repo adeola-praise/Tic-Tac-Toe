@@ -23,10 +23,21 @@ function leftDiagonal() {
     rightDiag.push(array[i][array.length - 1 - i]);
   }
 
+  // Check if left diagonal contains all X or all O values
+  let allXLeftDiag = leftDiag.every((element) => element === "X");
+  let allOLeftDiag = leftDiag.every((element) => element === "O");
+
+  if (allXLeftDiag || allOLeftDiag) {
+    console.log("Checked left diagonal...");
+    // winState = true;
+    let msg = console.log(`Array is ${leftDiag}`);
+    console.log(msg);
+  }
+
   console.log(leftDiag);
 }
 
-// leftDiagonal();
+leftDiagonal();
 
 let winState = false;
 
@@ -36,10 +47,10 @@ function checkGameStatus() {
   for (let i = 0; i < array.length; i++) {
     const row = array[i];
     let colArray = [];
+    leftDiag.push(array[i][i]);
+    rightDiag.push(array[i][array.length - 1 - i]);
 
     for (let j = 0; j < array.length; j++) {
-      leftDiag.push(array[i][i]);
-      rightDiag.push(array[i][array.length - 1 - i]);
       const column = array[j][i];
       colArray.push(column);
     }
@@ -87,4 +98,45 @@ function checkGameStatus() {
   winState = false;
 }
 
-checkGameStatus();
+// checkGameStatus();
+
+function checkRows() {
+  let board = gameBoard.getGameBoard();
+  for (let i = 0; i < board.length; i++) {
+    const row = board[i];
+
+    // Check if the column contains all X or all O values
+    let allXRow = row.every((element) => element === "X");
+    let allORow = row.every((element) => element === "O");
+
+    if (allXRow || allORow) {
+      let msg = console.log(`Array is ${row}`);
+      return { msg };
+    } else {
+      console.log("No Match");
+    }
+  }
+}
+
+function checkColumns() {
+  let brd = gameBoard.getGameBoard();
+  let colArray = [];
+
+  for (let i = 0; i < brd.length; i++) {
+    for (let j = 0; j < brd.length; j++) {
+      const column = brd[j][i];
+      colArray.push(column);
+    }
+
+    // Check if the column contains all X or all O values
+    let allXCol = colArray.every((element) => element === "X");
+    let allOCol = colArray.every((element) => element === "O");
+
+    if (allXCol || allOCol) {
+      let msg = console.log(`Array is ${colArray}`);
+      return { msg };
+    } else {
+      colArray = [];
+    }
+  }
+}
