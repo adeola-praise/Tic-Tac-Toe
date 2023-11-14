@@ -7,7 +7,7 @@
 let array = [
   ["X", "O", "X"],
   ["X", "X", "X"],
-  ["X", "X", "X"],
+  ["X", "O", "X"],
 ];
 
 let winRowIndex = [];
@@ -81,10 +81,10 @@ function checkForCrossMatch(arraySub) {
   let allO = arraySub.every((element) => element === "O");
 
   if (allX || allO) {
-    console.log("checking for match...");
-    console.log(`Found match: ${arraySub}`);
-    console.log(`Column Numbers: ${winColIndex}`);
-    console.log(`Row Numbers: ${winRowIndex}`);
+    // console.log("checking for match...");
+    // console.log(`Found match: ${arraySub}`);
+    // console.log(`Column Numbers: ${winColIndex}`);
+    // console.log(`Row Numbers: ${winRowIndex}`);
     return true;
   } else {
     // Empty the winrow and wincol
@@ -96,12 +96,27 @@ function checkForCrossMatch(arraySub) {
   return false;
 }
 
-function crossWinningMatch(row, column) {
+function crossWinningMatch() {
   count = 0;
   while (count < 3) {
-    array[row][column] = "Win";
     i++;
   }
 }
 
-checkColumns(array);
+function checkGameStatus() {
+  if (
+    checkColumns(array) ||
+    checkRows(array) ||
+    checkRightDiagonal(array) ||
+    checkleftDiagonal(array)
+  ) {
+    console.log(array);
+    // Return the player the won
+
+    console.log("There is a winner!");
+  } else {
+    console.log("Play again");
+  }
+}
+
+checkGameStatus();

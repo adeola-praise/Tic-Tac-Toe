@@ -6,6 +6,10 @@ createNewPlayer(playerX);
 let playerO = prompt("PlayerO name: ");
 createNewPlayer(playerO);
 
+let winRowIndex = [];
+let winColIndex = [];
+let winState = false;
+
 function createPlayer(name) {
   let _mark = "X";
 
@@ -16,7 +20,13 @@ function createPlayer(name) {
     _mark = mark;
   };
 
-  return { name, getMarker, setMarker };
+  let getPlayer = (marker) => {
+    if (marker === _mark) {
+      return { playerName: name, marker: _mark };
+    }
+  };
+
+  return { name, getMarker, setMarker, getPlayer };
 }
 
 function createNewPlayer(name) {
@@ -96,19 +106,6 @@ function checkPlayerTurn(player) {
   }
 }
 
-function receivePlayerInput() {
-  let player_input = prompt(
-    "Seperate selected row and column with a comma: "
-  ).split(",");
-
-  let row_input = player_input[0];
-  let column_input = player_input[1];
-
-  placeMark(currentPlayer, row_input, column_input);
-  checkPlayerTurn(currentPlayer);
-  gameBoard.displayGameBoard();
-}
-
 function checkleftDiagonal(array) {
   let leftDiag = [];
 
@@ -177,19 +174,66 @@ function checkForCrossMatch(arraySub) {
   let allO = arraySub.every((element) => element === "O");
 
   if (allX || allO) {
-    console.log("checking for match...");
-    console.log(`Found match: ${arraySub}`);
-    console.log(`Column Numbers: ${winColIndex}`);
-    console.log(`Row Numbers: ${winRowIndex}`);
     return true;
-  } else {
-    // Empty the winrow and wincol
-    console.log(`No match found`);
   }
 
   winColIndex = [];
   winRowIndex = [];
   return false;
+}
+
+function crossWinningMatch() {
+  i = 0;
+  while (i < 3) {
+    gameBoard.markBoardCell(winRowIndex[i], winColIndex[i], "Win");
+    i++;
+  }
+
+  gameBoard.displayGameBoard();
+}
+
+function checkGameStatus() {
+  let board = gameBoard.getGameBoard();
+  if (
+    checkColumns(board) ||
+    checkRows(board) ||
+    checkRightDiagonal(board) ||
+    checkleftDiagonal(board)
+  ) {
+    winState = true;
+    displayGameStatus();
+    // Return the player the won
+    console.log("There is a winner!");
+  } else {
+    console.log("Play again");
+  }
+}
+
+function receivePlayerInput() {
+  let player_input = prompt(
+    "Seperate selected row and column with a comma: "
+  ).split(",");
+
+  let row_input = player_input[0];
+  let column_input = player_input[1];
+
+  placeMark(currentPlayer, row_input, column_input);
+  checkGameStatus();
+  checkPlayerTurn(currentPlayer);
+  gameBoard.displayGameBoard();
+}
+
+function displayGameStatus() {
+  // Confirm the player that won the game by check the content of atleast one of the winning cell
+  console.log(gameBoard.getBoardCell(winRowIndex[0], winColIndex[0]));
+  if (gameBoard.getBoardCell(winRowIndex[0], winColIndex[0]) === "X") {
+    console.log(`${players[0].name} is the Winner!`);
+  } else {
+    console.log(`${players[1].name} is the Winner!`);
+  }
+
+  crossWinningMatch();
+  // I need the name of the player that won
 }
 
 // Next thing is to check game status
@@ -200,9 +244,12 @@ function checkForCrossMatch(arraySub) {
 function playGame() {
   gameBoard.displayGameBoard();
 
-  while (checkForEmptyCell()) {
+  while (checkForEmptyCell() && !winState) {
     receivePlayerInput();
   }
+
+  console.log("Game Completed");
+  displayGameStatus();
 
   // else {
   //   // Load win state
